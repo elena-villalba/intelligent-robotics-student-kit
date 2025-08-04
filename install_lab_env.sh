@@ -120,7 +120,7 @@ configure_bashrc() {
   fi
   
   # Comment any other workspace setup lines
-  sed -i '/source ~\/.*\/install\/setup.bash/ { /source ~\/robotino4-ros2\/install\/setup.bash/!s/^/#/ }' ~/.bashrc
+  sed -i '/source ~\/.*\/install\/setup.bash/ { /source ~\/ir_ws\/install\/setup.bash/!s/^/#/ }' ~/.bashrc
 
   # Source the updated .bashrc
   source ~/.bashrc
