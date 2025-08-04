@@ -6,14 +6,14 @@
 # Usage: bash setup_intelligent_robotics.sh
 
 ##########################################################
-# 		           FUNCTION DEFINITIONS                 	 #
+#                FUNCTION DEFINITIONS                    #
 ##########################################################
 
 # Install Visual Studio Code 
 install_vscode() {
   echo "Visual Studio Code is not installed. Proceeding with installation..."
   sudo apt update 
-  sudo snap install code --classic
+  sudo snap install --classic code
   echo "Visual Studio Code installation completed."
 }
 
@@ -25,31 +25,38 @@ install_terminator() {
   echo "Terminator installation completed."
 }
 
+# Install git 
+install_git() {
+  echo "Git is not installed. Proceeding with installation..."
+  sudo apt update
+  sudo apt install -y git
+  echo "Git installation completed."
+}
+
 # Install ROS 2 Humble
 install_ros2() {
   echo "ROS 2 Humble is not installed. Proceeding with installation..."
   
   # Set locale
-  sudo apt update && sudo apt install locales
+  sudo apt update && sudo apt install -y locales
   sudo locale-gen en_US en_US.UTF-8
   sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
   export LANG=en_US.UTF-8
   
   # Setup sources
-  sudo apt install software-properties-common
-  sudo add-apt-repository universe
+  sudo apt install -y software-properties-common
+  sudo add-apt-repository universe -y
   sudo apt update && sudo apt install curl -y
-  sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
   
+  export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')
+  curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb" # If using Ubuntu derivates use $UBUNTU_CODENAME
+  sudo dpkg -i /tmp/ros2-apt-source.deb
+
   # Intall ROS 2 packages
   sudo apt update 
   sudo apt upgrade -y
   sudo apt install ros-humble-desktop -y
   source /opt/ros/humble/setup.bash
-  
-  # Add ROS 2 repository
-  sudo sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
   
   echo "ROS 2 Humble installation completed."
 }
@@ -78,14 +85,6 @@ install_ros_packages() {
 
 }
 
-# Install git 
-install_git() {
-  echo "Git is not installed. Proceeding with installation..."
-  sudo apt update
-  sudo apt install -y git
-  echo "Git installation completed."
-}
-
 # Install colcon common extensions
 install_colcon_extensions() {
   sudo apt update
@@ -93,7 +92,7 @@ install_colcon_extensions() {
   echo "colcon common extensions installation completed."
 }
 
-# Function to configurate the bash file
+# Configurate the bash file
 configure_bashrc() {
   echo "Configuring the bash file..."
   # Ensure ROS 2 Humble environment setup is sourced in .bashrc
@@ -113,17 +112,11 @@ configure_bashrc() {
     echo "Adding gazebo to .bashrc"
     echo "source /usr/share/gazebo/setup.bash" >> ~/.bashrc
   fi
-
-  # Add gazebo model path 
-  if ! grep -q "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/robotino4-ros2/src/" ~/.bashrc; then
-    echo "Adding gazebo model path to .bashrc"
-    echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/robotino4-ros2/src/" >> ~/.bashrc
-  fi
    
   # Add workspace setup to bashrc
-  if ! grep -q "source ~/robotino4-ros2/install/setup.bash" ~/.bashrc; then
+  if ! grep -q "source ~/ir_ws/install/setup.bash" ~/.bashrc; then
     echo "Adding ROS 2 workspace setup to .bashrc"
-    echo "source ~/robotino4-ros2/install/setup.bash" >> ~/.bashrc
+    echo "source ~/ir_ws/install/setup.bash" >> ~/.bashrc
   fi
   
   # Comment any other workspace setup lines
@@ -136,9 +129,36 @@ configure_bashrc() {
   
 }
 
+# Create ROS 2 workspace
+create_ros2_workspace() {
+  # Create ROS 2 workspace if it doesn't exist
+  echo "Creating ROS 2 workspace..."
+  mkdir -p ~/ir_ws/src
+  echo "ROS 2 workspace created."
+}
+
+# Clone this repository into the ROS 2 workspace
+clone_robotino_ros2_repository() {
+  echo "Cloning the repository into the ROS 2 workspace..."
+  cd ~/ir_ws/src/
+  git clone https://github.com/elena-villalba/intelligent-robotics-student-kit.git . 
+  echo "Repository cloned successfully."
+}
+
+# Build ROS 2 workspace
+build_ros2_workspace() {
+  echo "Building ROS 2 workspace..."
+  cd ~/ir_ws
+  colcon build
+  echo "ROS 2 workspace build completed."
+  
+  # Source the updated .bashrc
+  source ~/.bashrc
+}
+
 
 ##########################################################
-# 			                  MAIN 			                  	 #
+#                        MAIN                            #
 ##########################################################
 
 echo "Installing the necesary resources..."
@@ -157,6 +177,13 @@ else
   echo "Terminator is already installed."
 fi
 
+# Check if Git is install
+if ! command -v git &> /dev/null; then
+  install_git
+else
+  echo "Git is already installed."
+fi
+
 # Check if ROS 2 Humble is installed
 if ! dpkg -l | grep -q ros-humble; then
   install_ros2
@@ -164,15 +191,9 @@ else
   echo "ROS 2 Humble is already installed."
 fi
 
+
 # Installing the required ROS 2 packages
 install_ros_packages
-
-# Check if Git is install
-if ! command -v git &> /dev/null; then
-  install_git
-else
-  echo "Git is already installed."
-fi
 
 # Check if pyhton colcon extensions are installed
 if ! dpkg -l | grep -q python3-colcon-common-extensions; then
@@ -181,16 +202,15 @@ else
    echo "colcon common extensions are already installed."
 fi
 
-# Check if python3 virtual library is installed
-# Comprobamos si python3-venv está instalado
-if ! dpkg -l python3.10-venv &>/dev/null; then
-  install_python_virtual_env
-else
-    echo "python3-venv is already installed"
-fi
-
-# Bash file configuration
 configure_bashrc
 
-echo " "
-echo "Installations and configurations are already completed!"
+create_ros2_workspace
+
+clone_robotino_ros2_repository
+
+build_ros2_workspace
+
+echo ""
+echo "✅ Intelligent Robotics Lab environment installed successfully!"
+echo "📂 Workspace located at ~/ir_ws"
+echo "💡 Run 'source ~/.bashrc' or open a new terminal to use ROS 2 commands."
