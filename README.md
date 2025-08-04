@@ -40,7 +40,7 @@ To set up your environment for working with this repository, follow these steps:
 3. **Execute the script:**
 
    ```bash
-   sudo ./install_lab_env.sh
+   ./install_lab_env.sh
    ```
 
 ## Getting Started with ROS 2
