@@ -61,6 +61,25 @@ In a second terminal:
 
 Use the arrow keys to move the turtle!
 
+## Project
+
+The `osr_maze_nav`package contains a very simple solution for the project goal: to automously navigate a maze without collisions, usign only Lidar 
+
+### How to launch:
+
+- **Terminal 1** - Launch the Gazebo maze world and robot:
+
+   ```bash
+   ros2 launch osr_bringup maze_world.launch.py 
+   ```
+
+- **Terminal 2** - Run the wall-following navigation algoritm:
+   ```bash
+   os2 run osr_maze_nav wall_follower 
+   ```
+
+
+
 ## Acknowledgements
 
 The `osr-gazebo` simulation assets are adapted from the [OSR Rover Code](https://github.com/nasa-jpl/osr-rover-code) by NASA JPL, used under the terms of the Apache 2.0 License.
