@@ -5,8 +5,23 @@ Original source: https://github.com/nasa-jpl/osr-rover-code
 Any modifications made in this repository will be noted below.
 
 ## Modifications:
-- [e.g. Removed some launch files – July 2025]
-- [e.g. Adapted URDF for Gazebo Classic]
+Simplified models are included to enhance simulation permformance and reduce computational load.
+- Added `simplified_meshes/` directory with lighter models
+- Added `osr_simplifies.urdf.xacro` using simplified meshes and updated inertias
+- Added launch files: `empty_world_simplified.py`and `rviz_simplified.launch.py` to launch the robot with the simplified meshes
+- Updated README with usage instructions
+
+### How to run:
+To view the rover in rviz and manually control the joints, execute the following command:
+
+```bash
+ros2 launch osr_gazebo rviz_simplified.launch.py
+```
+
+To launch the simulation along with the capability to manually control the joints, use the command:
+```bash
+rros2 launch osr_gazebo empty_world_simplified.launch.py 
+```
 
 # ROS packages for JPL Open Source Rover Gazebo Simulation
 
