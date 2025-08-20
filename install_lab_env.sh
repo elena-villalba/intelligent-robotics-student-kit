@@ -52,7 +52,7 @@ install_ros2() {
   curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb" # If using Ubuntu derivates use $UBUNTU_CODENAME
   sudo dpkg -i /tmp/ros2-apt-source.deb
 
-  # Intall ROS 2 packages
+  # Install ROS 2 packages
   sudo apt update 
   sudo apt upgrade -y
   sudo apt install ros-humble-desktop -y
@@ -80,6 +80,9 @@ install_ros_packages() {
   sudo apt install -y ros-humble-velocity-controllers
   sudo apt install -y ros-humble-joint-trajectory-controller
   sudo apt install -y ros-humble-gazebo-ros2-control-demos
+
+  # Other packages needed
+  sudo apt install -y ros-humble-nav2-msgs
 
   echo "ROS 2 packages intallation completed."
 
