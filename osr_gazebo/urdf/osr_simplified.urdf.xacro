@@ -1,11 +1,13 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rover">
+
+    <xacro:include filename="$(find osr_gazebo)/urdf/gazebo.urdf.xacro"/>
+    <xacro:include filename="$(find osr_gazebo)/urdf/insert_transmission.urdf.xacro"/>
+
+    <!-- Add colors here -->
+
     <material name="black">
         <color rgba="0.1 0.1 0.1 1.0"/>
-    </material>
-
-    <material name="blue">
-        <color rgba="0 0 1 0.5"/>
     </material>
 
     <material name="sky_blue">
@@ -20,8 +22,7 @@
       <color rgba="0.5451 0.2706 0.0745 1"/>
     </material>
 
-    <xacro:include filename="$(find osr_gazebo)/urdf/gazebo.urdf.xacro"/>
-    <xacro:include filename="$(find osr_gazebo)/urdf/insert_transmission.urdf.xacro"/>
+    <!-- Links and joint definitions -->
 
     <link name="base_footprint"/>
     <link name="base_link">
@@ -285,7 +286,6 @@
         </link>
 
         <joint name="front_wheel_joint_${prefix}" type="revolute"> 
-        <!-- revolute continuous -->
             <parent link="rocker_bogie_link_${prefix}_2"/>
             <origin rpy="0 0 0" xyz="0.170113 -0.000335 0.076721"/>
             <child link="front_wheel_link_${prefix}"/>
@@ -297,7 +297,6 @@
             <collision>
                 <origin rpy="${origin} 0 ${-dir*1.57}" xyz="0 0 0.0"/>
                 <geometry>
-                    <!-- <cylinder radius="0.03" length="0.04"/> -->
                     <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel_middle_left.stl"/>
                 </geometry>
             </collision>
@@ -305,7 +304,6 @@
             <visual>
                 <origin rpy="${origin} 0 ${-dir*1.57}" xyz="0 0 0.0"/>
                 <geometry>
-                    <!-- <cylinder radius="0.03" length="0.04"/> -->
                     <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel_middle_left.stl"/>
                 </geometry>
                 <material name="silver"/>
@@ -331,7 +329,6 @@
             <collision>
                 <origin rpy="0 0 ${-dir*1.57}" xyz="0 0 0.0"/>
                 <geometry>
-                    <!-- <cylinder radius="0.03" length="0.04"/> -->
                     <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel_link_left_2.stl"/>
                 </geometry>
             </collision>
@@ -339,7 +336,6 @@
             <visual>
                 <origin rpy="0 0 ${-dir*1.57}" xyz="0 0 0.0"/>
                 <geometry>
-                    <!-- <cylinder radius="0.03" length="0.04"/> -->
                     <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel_link_left_2.stl"/>
                 </geometry>
                 <material name="silver"/>
@@ -355,7 +351,6 @@
         </link>
 
         <joint name="rear_wheel_joint_${prefix}" type="revolute">
-        <!-- revolute continuous -->
             <parent link="rocker_bogie_link_${prefix}_1"/>
             <origin rpy="0 0 0" xyz="-0.311763 0 -0.030379"/>
             <child link="rear_wheel_link_${prefix}"/>
@@ -373,8 +368,7 @@
             <collision>
                 <origin rpy="-1.57 0 ${origin}" xyz="0 0 0.0"/>
                 <geometry>
-                    <cylinder radius="0.082" length="0.04"/>
-                    <!-- <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/> -->
+                    <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/>
                 </geometry>
                 <surface>
                     <friction>
@@ -389,9 +383,7 @@
             <visual>
                 <origin rpy="-1.57 0 ${origin}" xyz="0 0 0.0"/>
                 <geometry>
-                    <cylinder radius="0.082" length="0.04"/>
-
-                    <!-- <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/> -->
+                    <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -416,9 +408,7 @@
             <collision>
                 <origin rpy="-1.57 0 ${origin}" xyz="0 0 0.0"/>
                 <geometry>
-                    <cylinder radius="0.082" length="0.04"/>
-
-                    <!-- <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/> -->
+                    <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/>
                 </geometry>
                 <surface>
                     <friction>
@@ -433,9 +423,7 @@
             <visual>
                 <origin rpy="-1.57 0 ${origin}" xyz="0 0 0.0"/>
                 <geometry>
-                    <cylinder radius="0.082" length="0.04"/>
-
-                    <!-- <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/> -->
+                    <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -459,9 +447,7 @@
             <collision>
                 <origin rpy="-1.57 0 ${origin}" xyz="0 0 0.0"/>
                 <geometry>
-                    <cylinder radius="0.082" length="0.04"/>
-
-                    <!-- <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/> -->
+                    <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/>
                 </geometry>
                 <surface>
                     <friction>
@@ -476,9 +462,7 @@
             <visual>
                 <origin rpy="-1.57 0 ${origin}" xyz="0 0 0.0"/>
                 <geometry>
-                    <cylinder radius="0.082" length="0.04"/>
-
-                    <!-- <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/> -->
+                    <mesh filename="file://$(find osr_gazebo)/simplified_meshes/wheel.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -500,17 +484,7 @@
 
     </xacro:macro>
     <xacro:wheel prefix="left" dir="1" origin="0" prefix_1="L"/>
-    <xacro:wheel prefix="right" dir="-1" origin="3.14" prefix_1="R"/>
-
-    <joint name="imu_joint" type="fixed">
-            <parent link="base_link"/>
-            <child link="imu_link"/>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-        </joint>
-
-    <link name="imu_link"></link>
-
-    
+    <xacro:wheel prefix="right" dir="-1" origin="3.14" prefix_1="R"/>    
 
     <xacro:insert_velocity_transmission name="rear_wheel_joint_right"/>
     <xacro:insert_velocity_transmission name="rear_wheel_joint_left"/>
@@ -525,59 +499,9 @@
     <xacro:insert_position_transmission name="rear_wheel_joint_L"/>
 
 
-    <joint name="laser_joint" type="fixed">
-        <parent link="base_link" />
-        <child link="laser_frame" /> 
-        <origin xyz="0.09 0 0.085" rpy="0 0 0" />
+    <!-- Add here IMU link and joint -->
     
-    </joint>
-
-    <link name="laser_frame">
-        <visual>
-            <geometry>
-                <cylinder radius="0.03" length="0.04"/>
-            </geometry>
-            <material name="blue"/>
-        </visual>
-        <collision>
-            <geometry>
-                <cylinder radius="0.03" length="0.04"/>
-            </geometry>
-        </collision>
+    <!-- Add here LiDAR link and joint -->
     
-    </link>
-
-    <gazebo reference="laser_frame">
-        <sensor name="laser" type="ray">
-            <pose>0 0 0 0 0 0</pose>
-            <visualize>false</visualize>
-            <update_rate>10</update_rate>
-            <ray>
-                <scan>
-                    <horizontal>
-                        <samples>720</samples>
-                        <resolution>1</resolution> <!--(max_angle-min_angle)/samples * resolution -->
-                        <min_angle>-3.14159</min_angle>
-                        <max_angle>3.14159</max_angle>
-                    </horizontal>
-                </scan>
-                <range>
-                    <min>0.3</min>
-                    <max>12.0</max>
-                    <resolution>0.01</resolution>
-                </range>
-                <noise>
-                    <type>gaussian</type>
-                    <mean>0.0</mean>
-                    <stddev>0.01</stddev>
-                </noise>
-            </ray>
-            <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
-                <output_type>sensor_msgs/LaserScan</output_type>
-                <frame_name>laser_frame</frame_name>
-            </plugin>
-        </sensor>
-    
-    </gazebo>
 
 </robot>
