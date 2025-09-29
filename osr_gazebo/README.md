@@ -4,7 +4,10 @@ Original source: https://github.com/nasa-jpl/osr-rover-code
 
 Any modifications made in this repository will be noted below.
 
-## Modifications:
+## Modifications by Elena Villalba:
+- **Contact:** elena.villalba@upc.edu
+- **Repository:** https://github.com/elena-villalba/intelligent-robotics-student-kit 
+
 Simplified models are included to enhance simulation permformance and reduce computational load.
 - Added `simplified_meshes/` directory with lighter models
 - Added `osr_simplifies.urdf.xacro` using simplified meshes and updated inertias
