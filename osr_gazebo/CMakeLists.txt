@@ -28,8 +28,9 @@ install(DIRECTORY
   config
   urdf
   meshes
-  simplified_meshes
   rviz
+  simplified_meshes
+  worlds
   DESTINATION share/${PROJECT_NAME}/
 )
 

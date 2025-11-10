@@ -1,18 +1,16 @@
-This folder contains code from the [Open Source Rover project by NASA JPL](https://github.com/nasa-jpl/osr-rover-code), under the Apache License 2.0.
-
-Original source: https://github.com/nasa-jpl/osr-rover-code
-
-Any modifications made in this repository will be noted below.
-
-## Modifications by Elena Villalba:
-- **Contact:** elena.villalba@upc.edu
-- **Repository:** https://github.com/elena-villalba/intelligent-robotics-student-kit 
+## Modifications by PUCRA:
 
 Simplified models are included to enhance simulation permformance and reduce computational load.
+- Updated `osr_gazebo` to use modern `tf2_geometry_msgs.hpp` header (ROS 2 Humble compatibility).
 - Added `simplified_meshes/` directory with lighter models
-- Added `osr_simplifies.urdf.xacro` using simplified meshes and updated inertias
-- Added launch files: `empty_world_simplified.py`and `rviz_simplified.launch.py` to launch the robot with the simplified meshes
+- Added `osr_simplifies.urdf.xacro` using simplified meshes, updated inertial parameters, and integrated LIDAR and IMU sensors. 
+- Added Gazebo plugins for the LIDAR and IMU sensors.
+- Added launch files: `empty_world_simplified.py` and `rviz_simplified.launch.py` to launch the robot with the simplified meshes
 - Updated README with usage instructions
+- Introduced a `worlds/` directory containing three maze environments for testing navigation and mapping algorithms:
+  - `maze_1.world`
+  - `maze_2.world`
+  - `maze_3.world`
 
 ### How to run:
 To view the rover in rviz and manually control the joints, execute the following command:
@@ -23,14 +21,13 @@ ros2 launch osr_gazebo rviz_simplified.launch.py
 
 To launch the simulation along with the capability to manually control the joints, use the command:
 ```bash
-rros2 launch osr_gazebo empty_world_simplified.launch.py 
+ros2 launch osr_gazebo empty_world_simplified.launch.py 
 ```
 
 # ROS packages for JPL Open Source Rover Gazebo Simulation
 
 > [!NOTE]
-> The `COLCON_IGNORE` file frome the original repository has been remove to allow building within a colcon workspace. 
-> No change were made to the source code or structure of the package. 
+> This package isn't compiled with colcon by default. If you want to use this, remove the [COLCON_IGNORE file](./COLCON_IGNORE)
 
 ## Overview
 The following ROS packages are included to visualize the rover in rviz and simulate its operations in Gazebo:
