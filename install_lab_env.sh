@@ -80,6 +80,7 @@ install_ros_packages() {
   sudo apt install -y ros-humble-velocity-controllers
   sudo apt install -y ros-humble-joint-trajectory-controller
   sudo apt install -y ros-humble-gazebo-ros2-control-demos
+  sudo apt install -y ros-humble-urdf-tutorial
 
   # Other packages needed
   sudo apt install -y ros-humble-nav2-msgs
@@ -125,6 +126,22 @@ configure_bashrc() {
   # Comment any other workspace setup lines
   sed -i '/source ~\/.*\/install\/setup.bash/ { /source ~\/ir_ws\/install\/setup.bash/!s/^/#/ }' ~/.bashrc
 
+  # --- GAZEBO / ROS2  NETWORK CONFIG  ---
+  
+  # Delate past configurations 
+  sed -i '/^export GAZEBO_MASTER_URI=/d' ~/.bashrc
+  sed -i '/^export GAZEBO_IP=/d' ~/.bashrc
+  sed -i '/^export ROS_DOMAIN_ID=/d' ~/.bashrc
+
+  # Add new configurations
+  {
+    echo ""
+    echo "# Intelligent Robotics Lab – network configuration"
+    echo "export GAZEBO_IP=${GAZEBO_IP}"
+    echo "export GAZEBO_MASTER_URI=${GAZEBO_MASTER_URI}"
+    echo "export ROS_DOMAIN_ID=${ROS_DOMAIN_ID_INPUT}"
+  } >> ~/.bashrc
+  
   # Source the updated .bashrc
   source ~/.bashrc
   
@@ -165,6 +182,20 @@ build_ros2_workspace() {
 ##########################################################
 
 echo "Installing the necesary resources..."
+
+# --- ASK FOR NETWORK DATA ---
+read -p "Enter the value of x for the IP (130.130.130.x): " IP_LAST
+read -p "Enter the last two digits of the Gazebo port (113xx): " GZ_PORT_SUFFIX
+read -p "Enter the ROS_DOMAIN_ID for this PC: " ROS_DOMAIN_ID_INPUT
+
+GAZEBO_IP="130.130.130.${IP_LAST}"
+GAZEBO_MASTER_URI="http://${GAZEBO_IP}:113${GZ_PORT_SUFFIX}"
+
+echo "Using configuration:"
+echo "  GAZEBO_IP        = ${GAZEBO_IP}"
+echo "  GAZEBO_MASTER_URI= ${GAZEBO_MASTER_URI}"
+echo "  ROS_DOMAIN_ID    = ${ROS_DOMAIN_ID_INPUT}"
+echo ""
 
 # Check if Visual Studio Code is installed
 if ! snap list | grep -q code; then
