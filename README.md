@@ -43,6 +43,19 @@ To set up your environment for working with this repository, follow these steps:
    ./install_lab_env.sh
    ```
 
+### Install Docker
+
+```bash
+chmod +x install-docker.sh
+./install-docker.sh
+```
+
+After the installation if everything is success, run the following command
+
+```bash
+docker run --rm hello-world
+```
+
 ## Getting Started with ROS 2
 
 Once the script has finished, try running a basic ROS 2 demo:
