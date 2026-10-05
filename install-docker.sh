@@ -7,6 +7,11 @@
 
 set -euo pipefail
 
+# Imágenes utilizadas en las prácticas
+ROBOT_IMAGE="intelligent-robotics:humble"
+PYTHON_IMAGE="python:3.10"
+DOCKERFILE_URL="https://raw.githubusercontent.com/elena-villalba/intelligent-robotics-student-kit/main/Dockerfile"
+
 # Colores
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -238,7 +243,51 @@ else
 fi
 
 # ------------------------------------------------------------
-# 13. Comprobaciones finales
+# 13. Preparar imágenes Docker para Intelligent Robotics
+# ------------------------------------------------------------
+
+echo
+info "Preparando las imágenes Docker utilizadas en las prácticas..."
+
+TARGET_UID="$(id -u "$TARGET_USER")"
+TARGET_GID="$(id -g "$TARGET_USER")"
+
+BUILD_DIR="$(mktemp -d)"
+chmod 755 "$BUILD_DIR"
+
+cleanup() {
+    rm -rf "$BUILD_DIR"
+}
+trap cleanup EXIT
+
+info "Descargando el Dockerfile de Intelligent Robotics..."
+
+if curl -fsSL "$DOCKERFILE_URL" -o "$BUILD_DIR/Dockerfile"; then
+    ok "Dockerfile descargado correctamente."
+else
+    error "No se ha podido descargar el Dockerfile desde GitHub."
+fi
+
+info "Construyendo la imagen $ROBOT_IMAGE..."
+info "UID/GID del usuario $TARGET_USER: $TARGET_UID/$TARGET_GID"
+
+if sudo -u "$TARGET_USER" sg docker -c \
+    "docker build --build-arg USER_UID=$TARGET_UID --build-arg USER_GID=$TARGET_GID -t $ROBOT_IMAGE '$BUILD_DIR'"; then
+    ok "Imagen $ROBOT_IMAGE construida correctamente."
+else
+    error "No se ha podido construir la imagen $ROBOT_IMAGE."
+fi
+
+info "Descargando la imagen $PYTHON_IMAGE para el ejercicio introductorio..."
+
+if sudo -u "$TARGET_USER" sg docker -c "docker pull $PYTHON_IMAGE"; then
+    ok "Imagen $PYTHON_IMAGE descargada correctamente."
+else
+    error "No se ha podido descargar la imagen $PYTHON_IMAGE."
+fi
+
+# ------------------------------------------------------------
+# 14. Comprobaciones finales
 # ------------------------------------------------------------
 
 echo
@@ -278,6 +327,22 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
+if sudo -u "$TARGET_USER" sg docker -c \
+    "docker image inspect $ROBOT_IMAGE >/dev/null 2>&1"; then
+    ok "Imagen $ROBOT_IMAGE disponible."
+else
+    echo -e "${RED}[ERROR]${NC} Imagen $ROBOT_IMAGE no disponible."
+    ERRORS=$((ERRORS + 1))
+fi
+
+if sudo -u "$TARGET_USER" sg docker -c \
+    "docker image inspect $PYTHON_IMAGE >/dev/null 2>&1"; then
+    ok "Imagen $PYTHON_IMAGE disponible."
+else
+    echo -e "${RED}[ERROR]${NC} Imagen $PYTHON_IMAGE no disponible."
+    ERRORS=$((ERRORS + 1))
+fi
+
 echo
 
 if [[ "$ERRORS" -eq 0 ]]; then
@@ -288,6 +353,8 @@ if [[ "$ERRORS" -eq 0 ]]; then
     echo "Usuario:        $TARGET_USER"
     echo "Docker:         $(docker --version)"
     echo "Docker Compose: $(docker compose version --short)"
+    echo "Robot image:    $ROBOT_IMAGE"
+    echo "Python image:   $PYTHON_IMAGE"
     echo
     echo -e "${YELLOW}IMPORTANTE:${NC}"
     echo "Cierra sesión y vuelve a entrar para que el grupo"
