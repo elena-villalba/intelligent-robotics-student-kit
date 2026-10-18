@@ -1,0 +1,4 @@
+Robot Run graphical engine and ROS 2 bridge
+Created by Elena Villalba for Intelligent Robotics, UPC-EEBE.
+Provided for educational use within this course.
+
